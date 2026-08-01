@@ -144,6 +144,17 @@
             font-size: 32px; color: #fff; letter-spacing: 4px; text-transform: uppercase; box-shadow: 0 5px calc(25px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.3); 
             transition: all 0.5s;
         }
+        
+        /* IMAGE PAULINE HEADER */
+        .header-avatar {
+            height: 90px;
+            width: 90px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid var(--c-sec);
+            box-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.6);
+            background-color: #000;
+        }
 
         /* GRID & CARDS */
         .grid-days { display: flex; gap: 22px; flex: 1; position: relative; z-index: 10; }
@@ -265,7 +276,8 @@
 
         <div class="form-group">
             <label>Nom en haut à gauche</label>
-<input id="input-name" type="text" value="SIMPLEMENTPAULINE" oninput="updateGlobal('name', this.value)">        </div>
+            <input id="input-name" type="text" value="SIMPLEMENTPAULINE" oninput="updateGlobal('name', this.value)">
+        </div>
         <div class="form-group">
             <label>Pseudo Twitch</label>
             <input id="input-twitch" type="text" value="SIMPLEMENTPAULINE" oninput="updateGlobal('twitch', this.value)">
@@ -295,15 +307,20 @@
             
             <div class="bg-layer">
                 <div class="beam-1"></div><div class="beam-2"></div>
-<div class="watermark" id="display-watermark">SIMPLEMENTPAULINE</div>                <div class="dot-matrix"></div>
+                <div class="watermark" id="display-watermark">SIMPLEMENTPAULINE</div>
+                <div class="dot-matrix"></div>
             </div>
 
+            <!-- MODIFICATION ICI : IMAGE PAULINE A GAUCHE DE LA DATE -->
             <header class="header">
                 <div class="title-group">
                     <div class="title-planning">PLANNING</div>
                     <div class="title-name" id="display-name">SIMPLEMENTPAULINE</div>
                 </div>
-                <div class="header-badge" id="display-date">AOUT 2026</div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <img src="pauline.png" alt="Pauline" class="header-avatar">
+                    <div class="header-badge" id="display-date">AOUT 2026</div>
+                </div>
             </header>
 
             <div class="grid-days" id="poster-grid-container"></div> 
@@ -327,15 +344,15 @@
         let isAppReady = false;
         let saveTimeout;
         
-        // ICI TES IMAGES D'ORIGINE SONT REMISES PAR DEFAUT !
+        // MODIFICATION ICI : Planning par défaut avec lundi, mercredi, jeudi et samedi en OFF
         let schedule = [
-            { id: 0, name: 'LUNDI', date: '3', type: 'libre', img1: 'stream.png', time1: '18H00', title1: 'STREAM<br>LIBRE' },
-            { id: 1, name: 'MARDI', date: '4', type: 'split', img1: 'imagemardi.png', time1: '19H00', title1: 'REACT', sub1: 'debut concours été RELOAD', img2: 'f1.jpg', time2: '21H00', title2: 'F1 25', sub2: 'VIEWERS' },
-            { id: 2, name: 'MERCREDI', date: '5', type: 'off' },
-            { id: 3, name: 'JEUDI', date: '6', type: 'single', img1: 'perf.png', time1: '19H00', title1: 'FORTNITE', sub1: 'PERFORMANCE CUP' },
-            { id: 4, name: 'VENDREDI', date: '7', type: 'single', img1: 'imagevendredi.png', time1: '19H00', title1: 'Soirée Horreur', sub1: 'J\'ai peur' },
-            { id: 5, name: 'SAMEDI', date: '8', type: 'single', img1: 'bombe.png', time1: '15H00', title1: 'BOMBANANA!', sub1: 'AVEC KASH & WALID' },
-            { id: 6, name: 'DIMANCHE', date: '9', type: 'split', img1: 'imagedimancge.png', time1: '14H00', title1: 'On fete l\'été ', sub1: 'et on peint', img2: 'pillars.jpg', time2: '23H00', title2: 'PILLARS', sub2: 'GAMES VIEWERS' }
+            { id: 0, name: 'LUNDI', date: '3', type: 'off', img1: 'dayofff.png' },
+            { id: 1, name: 'MARDI', date: '4', type: 'single', img1: 'imagemardi.png', time1: '19H00', title1: 'REACT', sub1: 'DÉTENTE' },
+            { id: 2, name: 'MERCREDI', date: '5', type: 'off', img1: 'dayofff.png' },
+            { id: 3, name: 'JEUDI', date: '6', type: 'off', img1: 'dayofff.png' },
+            { id: 4, name: 'VENDREDI', date: '7', type: 'single', img1: 'imagevendredi.png', time1: '19H00', title1: 'JEU', sub1: 'INFO' },
+            { id: 5, name: 'SAMEDI', date: '8', type: 'off', img1: 'dayofff.png' },
+            { id: 6, name: 'DIMANCHE', date: '9', type: 'single', img1: 'imagedimancge.png', time1: '14H00', title1: 'JEU', sub1: 'INFO' }
         ];
 
         /* --- SAUVEGARDE AUTO --- */
@@ -397,7 +414,7 @@
                     if (config.theme === 'custom') applyCustomColors();
 
                     updateGlobal('name', config.name || "SIMPLEMENTPAULINE");
-updateGlobal('twitch', config.twitch || "SIMPLEMENTPAULINE");
+                    updateGlobal('twitch', config.twitch || "SIMPLEMENTPAULINE");
                     updateGlobal('date', config.date || "AOUT 2026");
                 } catch (e) {
                     console.error("Erreur chargement sauvegarde", e);
@@ -578,7 +595,14 @@ updateGlobal('twitch', config.twitch || "SIMPLEMENTPAULINE");
                     <div class="day-card">`;
 
                 if (day.type === 'off') {
-                    cardHTML += `<div class="event-block off-block"><div class="event-overlay"></div><div class="event-info text-center off-text"><span class="game-title">DAY<br>OFF</span></div></div>`;
+                    cardHTML += `
+                        <div class="event-block off-block">
+                            <div class="event-bg" style="background-image: url('${day.img1 || 'dayofff.jpg'}'); filter: brightness(0.6) saturate(0.8);"></div>
+                            <div class="event-overlay"></div>
+                            <div class="event-info text-center off-text">
+                                <span class="game-title">DAY<br>OFF</span>
+                            </div>
+                        </div>`;
                 } else if (day.type === 'libre') {
                     cardHTML += `
                         <div class="event-block">
