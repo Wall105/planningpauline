@@ -145,15 +145,23 @@
             transition: all 0.5s;
         }
         
-        /* IMAGE PAULINE HEADER */
+        /* IMAGE PAULINE HEADER (Agrandie) */
         .header-avatar {
-            height: 90px;
-            width: 90px;
+            height: 180px; 
+            width: 180px;
             object-fit: cover;
             border-radius: 50%;
             border: 3px solid var(--c-sec);
             box-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.6);
             background-color: #000;
+        }
+
+        /* MASCOTTE CHAT (Sans contour) */
+        .header-mascot {
+            height: 180px; /* Aligné sur la taille de Pauline */
+            width: auto;
+            object-fit: contain;
+            /* Sans bordure, sans shadow */
         }
 
         /* GRID & CARDS */
@@ -311,12 +319,17 @@
                 <div class="dot-matrix"></div>
             </div>
 
-            <!-- MODIFICATION ICI : IMAGE PAULINE A GAUCHE DE LA DATE -->
+            <!-- MODIFICATION ICI : IMAGE CHAT.GIF A DROITE DU TITRE ET IMAGE PAULINE AGRANDIE -->
             <header class="header">
-                <div class="title-group">
-                    <div class="title-planning">PLANNING</div>
-                    <div class="title-name" id="display-name">SIMPLEMENTPAULINE</div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div class="title-group">
+                        <div class="title-planning">PLANNING</div>
+                        <div class="title-name" id="display-name">SIMPLEMENTPAULINE</div>
+                    </div>
+                    <!-- AJOUT DU CHAT -->
+                    <img src="chat.gif" alt="Mascotte Chat" class="header-mascot">
                 </div>
+                
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <img src="pauline.png" alt="Pauline" class="header-avatar">
                     <div class="header-badge" id="display-date">AOUT 2026</div>
@@ -344,7 +357,6 @@
         let isAppReady = false;
         let saveTimeout;
         
-        // MODIFICATION ICI : Planning par défaut avec lundi, mercredi, jeudi et samedi en OFF
         let schedule = [
             { id: 0, name: 'LUNDI', date: '3', type: 'off', img1: 'dayofff.png' },
             { id: 1, name: 'MARDI', date: '4', type: 'single', img1: 'imagemardi.png', time1: '19H00', title1: 'REACT', sub1: 'DÉTENTE' },
