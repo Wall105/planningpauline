@@ -134,6 +134,8 @@
 
         /* HEADER PAYSAGE (Normal) */
         .header { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 10; padding-bottom: 25px; margin-bottom: 35px; }
+        .header-block-title { display: flex; align-items: center; gap: 20px; }
+        .header-block-date { display: flex; align-items: center; gap: 20px; }
         .title-group { display: flex; flex-direction: column; }
         .title-planning { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 88px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #ffffff; line-height: 0.85; text-shadow: 0 0 calc(40px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.9); transition: text-shadow 0.5s; }
         .title-name { font-family: 'Oswald', sans-serif; font-size: 34px; font-weight: 600; color: var(--c-sec); text-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.6); letter-spacing: 12px; margin-top: 10px; text-transform: uppercase; transition: color 0.5s, text-shadow 0.5s; }
@@ -147,6 +149,8 @@
         
         .header-avatar { height: 180px; width: 180px; object-fit: cover; border-radius: 50%; border: 3px solid var(--c-sec); box-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.6); background-color: #000; }
         .header-mascot { height: 180px; width: auto; object-fit: contain; }
+        
+        .mobile-only-avatar { display: none !important; }
 
         /* GRID & CARDS PAYSAGE (Normal) */
         .grid-days { display: flex; gap: 22px; flex: 1; position: relative; z-index: 10; }
@@ -159,7 +163,7 @@
 
         .event-block { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 25px 20px; overflow: hidden; }
         .event-block:not(:last-child)::after { content: ''; position: absolute; bottom: 0; left: 5%; right: 5%; height: 2px; background: linear-gradient(to right, transparent, var(--c-sec), transparent); z-index: 10; box-shadow: 0 0 calc(15px * var(--neon-glow)) var(--c-sec); transition: all 0.5s; }
-        .event-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: 1; }
+        .event-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; z-index: 1; }
         .event-bg.with-effects { filter: saturate(1.3) brightness(0.7) contrast(1.1); }
         .event-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6, 2, 12, 0.9) 0%, transparent 35%); z-index: 2; }
         .event-overlay.with-effects { background: linear-gradient(to top, #06020c 10%, rgba(6, 2, 12, 0.5) 65%, transparent 100%); }
@@ -197,19 +201,21 @@
 
         /* ─── NOUVEAU : MODE VERTICAL (Tiktok, Reels, Shorts) ─── */
         body.vertical-mode .poster { width: 1080px; height: 1920px; padding: 40px 30px 100px; transform: scale(0.40); }
-        body.vertical-mode .header { flex-direction: column; align-items: center; text-align: center; gap: 15px; margin-bottom: 25px; padding-bottom: 0; }
-        body.vertical-mode .title-group { align-items: center; }
-        body.vertical-mode .header > div:first-child { flex-direction: column; }
-        body.vertical-mode .header-mascot { height: 130px; margin-top: 10px; }
-        body.vertical-mode .header-avatar { height: 120px; width: 120px; }
-        body.vertical-mode .header-badge { font-size: 28px; padding: 10px 25px; }
+        
+        body.vertical-mode .header { flex-direction: column; align-items: center; text-align: center; gap: 10px; margin-bottom: 25px; padding-bottom: 0; }
+        body.vertical-mode .header-block-title { justify-content: center; width: 100%; gap: 15px; }
+        body.vertical-mode .header-block-date { justify-content: center; }
+        body.vertical-mode .desktop-only-avatar { display: none !important; }
+        body.vertical-mode .mobile-only-avatar { display: block !important; height: 140px; width: 140px; border-radius: 50%; border: 3px solid var(--c-sec); object-fit: cover; box-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.6); }
+        body.vertical-mode .header-mascot { height: 140px; margin-top: 10px; }
+        body.vertical-mode .header-badge { font-size: 28px; padding: 10px 25px; margin-top: 10px; }
         body.vertical-mode .watermark { transform: translate(-50%, -50%) rotate(-90deg); font-size: 250px; opacity: 0.02; letter-spacing: 5px; }
         
         body.vertical-mode .grid-days { flex-direction: column; gap: 15px; }
         body.vertical-mode .day-col { flex-direction: row; height: 100%; align-items: stretch; gap: 15px; }
         body.vertical-mode .day-header { 
-            flex-direction: column; justify-content: center; align-items: flex-end; text-align: right; 
-            width: 140px; border-bottom: none; border-right: 3px solid rgba(var(--c-prim-light-rgb), 0.4); 
+            flex-direction: column; justify-content: center; align-items: center; text-align: center; 
+            width: 120px; border-bottom: none; border-right: 3px solid rgba(var(--c-prim-light-rgb), 0.4); 
             padding: 0 15px 0 0; margin-bottom: 0; 
         }
         body.vertical-mode .day-header::after { top: auto; bottom: 20%; left: auto; right: -3px; width: 3px; height: 60%; }
@@ -218,14 +224,24 @@
         body.vertical-mode .day-card { flex-direction: row; flex: 1; border-top: none; border-left: 4px solid var(--c-sec); }
         body.vertical-mode .day-col.off .day-card { border-left-color: #4b5563; }
         
-        body.vertical-mode .event-block { padding: 15px; }
+        /* Centrage du texte et images en vertical */
+        body.vertical-mode .event-block { 
+            justify-content: center; /* Centre le contenu verticalement */
+            align-items: center;     /* Centre le contenu horizontalement */
+            text-align: center;
+            padding: 15px; 
+        }
+        body.vertical-mode .event-info {
+            align-items: center;
+        }
         body.vertical-mode .event-block:not(:last-child)::after {
             bottom: 5%; top: 5%; left: auto; right: 0; width: 2px; height: auto;
             background: linear-gradient(to bottom, transparent, var(--c-sec), transparent);
         }
-        body.vertical-mode .event-bg { background-position: center center; }
-        body.vertical-mode .event-overlay { background: linear-gradient(to top, rgba(6, 2, 12, 0.95) 0%, rgba(6, 2, 12, 0.4) 50%, transparent 100%); }
-        body.vertical-mode .time-wrapper { margin-bottom: 4px; padding: 4px 12px; }
+        /* Ombre uniforme pour bien voir le texte au milieu */
+        body.vertical-mode .event-overlay { background: rgba(0, 0, 0, 0.45) !important; }
+        
+        body.vertical-mode .time-wrapper { align-self: center; margin-bottom: 8px; padding: 4px 12px; }
         body.vertical-mode .time-text { font-size: 18px; }
         body.vertical-mode .game-title { font-size: 26px; }
         body.vertical-mode .game-sub { font-size: 14px; }
@@ -266,7 +282,7 @@
         <!-- NOUVEAU : TOGGLE FORMAT -->
         <div class="form-group" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; border: 1px solid var(--c-sec);">
             <label style="color: var(--c-sec);">📱 Format de l'image (Orientation)</label>
-            <select id="select-format" onchange="updateFormat(this.value)" style="border: none; font-size: 16px;">
+            <select id="select-format" onchange="updateFormat(this.value)" style="border: none; font-size: 16px; font-weight: bold;">
                 <option value="horizontal">🖥️ Paysage (1920x1080) - Twitch/Twitter</option>
                 <option value="vertical">📱 Portrait (1080x1920) - Tiktok/Reels/Story</option>
             </select>
@@ -358,17 +374,24 @@
                 <div class="dot-matrix"></div>
             </div>
 
+            <!-- MODIFICATION ICI : NOUVELLE STRUCTURE D'EN-TÊTE ADAPTABLE -->
             <header class="header">
-                <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="header-block-title">
+                    <!-- Pauline (Apparait uniquement en Mobile/Vertical) -->
+                    <img src="pauline.png" alt="Pauline" class="mobile-only-avatar">
+                    
                     <div class="title-group">
                         <div class="title-planning">PLANNING</div>
                         <div class="title-name" id="display-name">SIMPLEMENTPAULINE</div>
                     </div>
+                    
                     <img src="chat.gif" alt="Mascotte Chat" class="header-mascot">
                 </div>
                 
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <img src="pauline.png" alt="Pauline" class="header-avatar">
+                <div class="header-block-date">
+                    <!-- Pauline (Apparait uniquement en PC/Horizontal) -->
+                    <img src="pauline.png" alt="Pauline" class="header-avatar desktop-only-avatar">
+                    
                     <div class="header-badge" id="display-date">AOUT 2026</div>
                 </div>
             </header>
