@@ -6,8 +6,8 @@
     <title>Générateur Planning SIMPLEMENTPAULINE - PRO (Sauvegarde Auto)</title>
     
     <style>
-        /* Ajout de Montserrat dans l'import Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,700;1,500;1,700&family=Oswald:ital,wght@0,500;0,700;1,700&family=Rajdhani:wght@500;600;700&display=swap');
+        /* ÉNORME IMPORT DE GOOGLE FONTS (Beaucoup de choix) */
+        @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Inter:ital,wght@0,400;0,700;1,400;1,700&family=Lato:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:ital,wght@0,500;0,700;1,500;1,700&family=Oswald:ital,wght@0,500;0,700;1,700&family=Poppins:ital,wght@0,500;0,700;1,500;1,700&family=Rajdhani:wght@500;600;700&family=Roboto+Condensed:ital,wght@0,400;0,700;1,400;1,700&display=swap');
         
         /* ─── VARIABLES DE THÈMES (COULEURS) ─── */
         :root {
@@ -28,7 +28,7 @@
             --neon-glow: 1; 
             --card-radius: 8px; 
             
-            /* VARIABLES DE TYPOGRAPHIE (Nouvelles) */
+            /* VARIABLES DE TYPOGRAPHIE */
             --font-main: 'Oswald', sans-serif;
             --font-weight-main: 700;
             --font-style-main: italic;
@@ -103,6 +103,10 @@
         .checkbox-group { display: flex; gap: 15px; align-items: center; padding: 5px 0; }
         .checkbox-label { display: flex; align-items: center; gap: 8px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
         .checkbox-label input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--c-sec); }
+        
+        /* Select Typo Style Spécial */
+        #select-font optgroup { background: #111; color: var(--c-sec); font-family: sans-serif; }
+        #select-font option { color: #fff; font-family: sans-serif; padding: 5px; }
 
         .f12-btn { background: linear-gradient(to right, var(--c-prim), var(--c-sec)); color: #fff; border: none; padding: 15px; font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; cursor: pointer; border-radius: 8px; text-transform: uppercase; transition: transform 0.2s, box-shadow 0.2s; margin-top: 10px; flex-shrink: 0; }
         .f12-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(var(--c-prim-rgb), 0.4); }
@@ -236,9 +240,7 @@
         body.vertical-mode .day-col.off .day-card { border-left-color: #4b5563; }
         
         /* Centrage du texte et images en vertical */
-        body.vertical-mode .event-block { 
-            justify-content: center; align-items: center; text-align: center; padding: 15px; 
-        }
+        body.vertical-mode .event-block { justify-content: center; align-items: center; text-align: center; padding: 15px; }
         body.vertical-mode .event-info { align-items: center; }
         body.vertical-mode .event-block:not(:last-child)::after {
             bottom: 5%; top: 5%; left: auto; right: 0; width: 2px; height: auto;
@@ -254,14 +256,8 @@
         body.vertical-mode .text-center .game-title { font-size: 34px; }
         body.vertical-mode .twitch-badge { bottom: 25px; padding: 8px 30px 8px 25px; }
 
-        @media (max-width: 1600px) { 
-             .poster { zoom: 0.55; } 
-             body.vertical-mode .poster { zoom: 0.50; }
-        }
-        @media (max-width: 1300px) { 
-             .poster { zoom: 0.45; } 
-             body.vertical-mode .poster { zoom: 0.40; }
-        }
+        @media (max-width: 1600px) { .poster { zoom: 0.55; } body.vertical-mode .poster { zoom: 0.50; } }
+        @media (max-width: 1300px) { .poster { zoom: 0.45; } body.vertical-mode .poster { zoom: 0.40; } }
         
         /* MODE CAPTURE F12 */
         body.capture-mode .sidebar { display: none; }
@@ -332,14 +328,26 @@
 
         <div class="split-divider"></div>
 
-        <!-- NOUVEAU BLOC : TYPOGRAPHIE -->
+        <!-- BLOC TYPOGRAPHIE (Mise à jour avec beaucoup plus d'options) -->
         <div class="form-group" style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
             <label style="color: #fff; font-size: 13px;">✍️ Typographie (Textes de l'affiche)</label>
             <select id="select-font" onchange="updateFont()" style="border: 1px solid rgba(255,255,255,0.2); font-weight: bold; margin-bottom: 5px;">
-                <option value="'Oswald', sans-serif">Oswald (Défaut)</option>
-                <option value="'Montserrat', sans-serif">Montserrat</option>
-                <option value="'Rajdhani', sans-serif">Rajdhani</option>
-                <option value="'Arial', sans-serif">Arial / Sans-serif classique</option>
+                <optgroup label="Spécial Streaming (Impact)">
+                    <option value="'Oswald', sans-serif">Oswald (Défaut original)</option>
+                    <option value="'Bebas Neue', sans-serif">Bebas Neue (Très condensé)</option>
+                    <option value="'Anton', sans-serif">Anton (Épais et large)</option>
+                    <option value="'Rajdhani', sans-serif">Rajdhani (Style Tech/Futuriste)</option>
+                </optgroup>
+                <optgroup label="Modernes & Arrondies">
+                    <option value="'Montserrat', sans-serif">Montserrat</option>
+                    <option value="'Poppins', sans-serif">Poppins</option>
+                </optgroup>
+                <optgroup label="Neutres & Propres">
+                    <option value="'Inter', sans-serif">Inter</option>
+                    <option value="'Lato', sans-serif">Lato</option>
+                    <option value="'Roboto Condensed', sans-serif">Roboto Condensed</option>
+                    <option value="'Arial', sans-serif">Arial / Sans-serif classique</option>
+                </optgroup>
             </select>
             
             <div class="checkbox-group">
@@ -404,24 +412,18 @@
                 <div class="dot-matrix"></div>
             </div>
 
-            <!-- STRUCTURE D'EN-TÊTE ADAPTABLE -->
             <header class="header">
                 <div class="header-block-title">
-                    <!-- Pauline (Apparait uniquement en Mobile/Vertical) -->
                     <img src="pauline.png" alt="Pauline" class="mobile-only-avatar">
-                    
                     <div class="title-group">
                         <div class="title-planning">PLANNING</div>
                         <div class="title-name" id="display-name">SIMPLEMENTPAULINE</div>
                     </div>
-                    
                     <img src="chat.gif" alt="Mascotte Chat" class="header-mascot">
                 </div>
                 
                 <div class="header-block-date">
-                    <!-- Pauline (Apparait uniquement en PC/Horizontal) -->
                     <img src="pauline.png" alt="Pauline" class="header-avatar desktop-only-avatar">
-                    
                     <div class="header-badge" id="display-date">AOUT 2026</div>
                 </div>
             </header>
@@ -525,7 +527,7 @@
 
             if (config.schedule) schedule = config.schedule;
 
-            // Application visuelle des paramètres au lancement
+            // Application visuelle
             updateFormat(config.format || 'horizontal');
             changeTheme(config.theme || 'custom');
             document.body.setAttribute('data-bg', config.bg || 'minimal');
@@ -542,7 +544,7 @@
 
             renderSidebar();
             renderGrid();
-            isAppReady = true; // Active la sauvegarde à partir de maintenant
+            isAppReady = true; 
         }
 
         /* --- OUTILS --- */
@@ -565,11 +567,8 @@
         }
 
         function updateFormat(format) {
-            if(format === 'vertical') {
-                document.body.classList.add('vertical-mode');
-            } else {
-                document.body.classList.remove('vertical-mode');
-            }
+            if(format === 'vertical') { document.body.classList.add('vertical-mode'); } 
+            else { document.body.classList.remove('vertical-mode'); }
             saveConfig();
         }
 
@@ -580,16 +579,11 @@
                 applyCustomColors();
             } else {
                 document.getElementById('custom-color-panel').style.display = 'none';
-                document.body.style.removeProperty('--c-prim');
-                document.body.style.removeProperty('--c-prim-rgb');
-                document.body.style.removeProperty('--c-prim-light-rgb');
-                document.body.style.removeProperty('--c-sec');
-                document.body.style.removeProperty('--c-sec-rgb');
-                document.body.style.removeProperty('--grad-time1');
-                document.body.style.removeProperty('--grad-time2');
-                document.body.style.removeProperty('--time1-bord');
-                document.body.style.removeProperty('--time2-bord');
-                document.body.style.removeProperty('--time2-sub');
+                document.body.style.removeProperty('--c-prim'); document.body.style.removeProperty('--c-prim-rgb');
+                document.body.style.removeProperty('--c-prim-light-rgb'); document.body.style.removeProperty('--c-sec');
+                document.body.style.removeProperty('--c-sec-rgb'); document.body.style.removeProperty('--grad-time1');
+                document.body.style.removeProperty('--grad-time2'); document.body.style.removeProperty('--time1-bord');
+                document.body.style.removeProperty('--time2-bord'); document.body.style.removeProperty('--time2-sub');
                 document.body.style.removeProperty('--time2-txt');
             }
             saveConfig();
@@ -623,8 +617,7 @@
 
         function updateData(dayId, field, value) {
             schedule[dayId][field] = value;
-            renderGrid(); 
-            saveConfig();
+            renderGrid(); saveConfig();
         }
 
         function updateType(dayId, newType) {
@@ -635,9 +628,7 @@
             if(newType === 'split' && !schedule[dayId].title2) {
                 schedule[dayId].title2 = "JEU 2"; schedule[dayId].sub2 = "INFO"; schedule[dayId].time2 = "22H00";
             }
-            renderSidebar(); 
-            renderGrid();    
-            saveConfig();
+            renderSidebar(); renderGrid(); saveConfig();
         }
 
         function handleImageUpload(input, dayId, imageField) {
@@ -646,8 +637,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     schedule[dayId][imageField] = e.target.result; 
-                    renderGrid(); 
-                    saveConfig();
+                    renderGrid(); saveConfig();
                 }
                 reader.readAsDataURL(file);
             }
