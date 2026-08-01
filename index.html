@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur Planning SIMPLEMENTPAULINE - PRO (Sauvegarde Auto)</title>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:ital,wght@0,500;0,700;1,700&family=Rajdhani:wght@500;600;700&display=swap');
+
+        /* ─── VARIABLES DE THÈMES (COULEURS) ─── */
+        :root {
+            /* 🟣 CYBERPUNK (Défaut) */
+            --c-prim: #9d00ff;
+            --c-prim-rgb: 157, 0, 255;
+            --c-prim-light-rgb: 168, 85, 247;
+            --c-sec: #22d3ee;
+            --c-sec-rgb: 34, 211, 238;
+            --grad-time1: linear-gradient(to right, var(--c-prim), #6b21a8);
+            --time1-bord: #e9d5ff;
+            --grad-time2: linear-gradient(to right, var(--c-sec), #0e7490);
+            --time2-bord: #cffafe;
+            --time2-txt: #000;
+            --time2-sub: var(--c-sec);
+
+            /* VARIABLES DE CUSTOMISATION */
+            --neon-glow: 1; 
+            --card-radius: 8px; 
+        }
+
+        body[data-theme="inferno"] {
+            --c-prim: #ff0033; --c-prim-rgb: 255, 0, 51; --c-prim-light-rgb: 255, 77, 106;
+            --c-sec: #ff9900; --c-sec-rgb: 255, 153, 0;
+            --grad-time1: linear-gradient(to right, #ff0033, #99001f); --time1-bord: #ffccd6;
+            --grad-time2: linear-gradient(to right, #ff9900, #995c00); --time2-bord: #ffe6cc;
+            --time2-txt: #000; --time2-sub: #ffe6cc;
+        }
+
+        body[data-theme="toxic"] {
+            --c-prim: #00ff00; --c-prim-rgb: 0, 255, 0; --c-prim-light-rgb: 77, 255, 77;
+            --c-sec: #ffea00; --c-sec-rgb: 255, 234, 0;
+            --grad-time1: linear-gradient(to right, #00ff00, #008000); --time1-bord: #ccffcc;
+            --grad-time2: linear-gradient(to right, #ffea00, #998c00); --time2-bord: #fffbcc;
+            --time2-txt: #000; --time2-sub: #fffbcc;
+        }
+
+        body[data-theme="glacier"] {
+            --c-prim: #0066ff; --c-prim-rgb: 0, 102, 255; --c-prim-light-rgb: 77, 148, 255;
+            --c-sec: #00ffff; --c-sec-rgb: 0, 255, 255;
+            --grad-time1: linear-gradient(to right, #0066ff, #003d99); --time1-bord: #cce0ff;
+            --grad-time2: linear-gradient(to right, #00ffff, #009999); --time2-bord: #ccffff;
+            --time2-txt: #000; --time2-sub: #ccffff;
+        }
+
+        body[data-theme="gold"] {
+            --c-prim: #d4af37; --c-prim-rgb: 212, 175, 55; --c-prim-light-rgb: 224, 196, 105;
+            --c-sec: #ffffff; --c-sec-rgb: 255, 255, 255;
+            --grad-time1: linear-gradient(to right, #d4af37, #806921); --time1-bord: #f6efe1;
+            --grad-time2: linear-gradient(to right, #ffffff, #999999); --time2-bord: #ffffff;
+            --time2-txt: #000; --time2-sub: #ffffff;
+        }
+
+        /* ─── STYLES GÉNÉRAUX ─── */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #111; font-family: 'Rajdhani', sans-serif; display: flex; height: 100vh; overflow: hidden; color: #fff; }
+
+        /* ─── SIDEBAR (GÉNÉRATEUR) ─── */
+        .sidebar { width: 450px; background: #0a0514; border-right: 1px solid rgba(var(--c-prim-light-rgb), 0.3); padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; box-shadow: 10px 0 30px rgba(0,0,0,0.8); z-index: 100; }
+        .sidebar::-webkit-scrollbar { width: 8px; }
+        .sidebar::-webkit-scrollbar-track { background: #030107; }
+        .sidebar::-webkit-scrollbar-thumb { background: var(--c-prim); border-radius: 4px; }
+        .sidebar h2 { font-family: 'Oswald', sans-serif; color: var(--c-sec); font-size: 24px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid rgba(var(--c-sec-rgb), 0.3); padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+        .btn-reset { background: none; border: 1px solid #ff3333; color: #ff3333; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; font-family: 'Rajdhani', sans-serif; transition: 0.2s; }
+        .btn-reset:hover { background: #ff3333; color: #fff; }
+
+        details { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 5px; }
+        summary { font-family: 'Oswald', sans-serif; font-size: 18px; color: var(--time1-bord); font-weight: 700; text-transform: uppercase; padding: 15px; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: '▼'; font-size: 14px; color: rgb(var(--c-prim-light-rgb)); }
+        details[open] summary::after { content: '▲'; }
+        .details-content { padding: 0 15px 15px 15px; display: flex; flex-direction: column; gap: 12px; }
+
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-weight: 600; color: #9ca3af; font-size: 12px; text-transform: uppercase; }
+        .form-group input, .form-group select { padding: 8px; background: #030107; border: 1px solid rgba(var(--c-prim-light-rgb), 0.4); color: #fff; border-radius: 4px; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .form-group input[type="color"] { padding: 2px; height: 35px; cursor: pointer; }
+        .form-group input[type="range"] { padding: 0; cursor: pointer; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--c-sec); box-shadow: 0 0 10px rgba(var(--c-sec-rgb), 0.2); }
+        .split-divider { width: 100%; height: 1px; background: rgba(var(--c-sec-rgb), 0.3); margin: 10px 0; }
+
+        .upload-btn { background: rgba(var(--c-prim-light-rgb), 0.15); border: 1px dashed rgb(var(--c-prim-light-rgb)); color: #fff; padding: 10px; text-align: center; border-radius: 4px; cursor: pointer; font-size: 14px; transition: 0.2s; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+        .upload-btn:hover { background: rgba(var(--c-prim-light-rgb), 0.3); border-color: var(--c-sec); }
+        .upload-btn input[type="file"] { display: none; }
+
+        .f12-btn { background: linear-gradient(to right, var(--c-prim), var(--c-sec)); color: #fff; border: none; padding: 15px; font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; cursor: pointer; border-radius: 8px; text-transform: uppercase; transition: transform 0.2s, box-shadow 0.2s; margin-top: 10px; flex-shrink: 0; }
+        .f12-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(var(--c-prim-rgb), 0.4); }
+        
+        .f12-help { font-size: 13px; color: #9ca3af; text-align: left; margin-top: 8px; font-weight: 600; line-height: 1.6; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .f12-help code { color: var(--c-sec); background: #000; padding: 2px 4px; border-radius: 3px; font-family: monospace; font-size: 11px; word-break: break-all; }
+
+        /* ─── PREVIEW & POSTER ─── */
+        .preview-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; overflow: auto; padding: 20px; }
+        body.capture-mode .poster { transform: none; }
+        .poster { 
+            width: 1920px; height: 1080px; background-color: #05020a; position: relative; overflow: hidden; padding: 45px 60px 85px; display: flex; flex-direction: column;
+            transform: scale(0.60); transform-origin: top center;
+            border: 3px solid var(--c-prim);
+            box-shadow: inset 0 0 calc(150px * var(--neon-glow)) rgba(var(--c-prim-rgb), 0.2), 0 0 calc(40px * var(--neon-glow)) rgba(var(--c-prim-rgb), 0.4);
+            flex-shrink: 0; transition: border-color 0.5s, box-shadow 0.5s;
+        }
+
+        /* ─── GESTION DES FONDS (BACKGROUNDS) ─── */
+        .bg-layer { position: absolute; inset: 0; z-index: 0; pointer-events: none; transition: all 0.5s ease; }
+        .bg-layer::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 10% 10%, rgba(var(--c-prim-rgb), 0.2) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(var(--c-sec-rgb), 0.15) 0%, transparent 40%), #030107; transition: all 0.5s ease; }
+        .beam-1, .beam-2 { position: absolute; width: 200%; height: 180px; transform-origin: center; transition: all 0.5s ease; opacity: 1; }
+        .beam-1 { top: 15%; left: -50%; transform: rotate(-35deg); background: linear-gradient(to right, transparent 0%, rgba(var(--c-prim-light-rgb), 0.08) 50%, transparent 100%); }
+        .beam-2 { top: 60%; left: -50%; transform: rotate(-35deg); background: linear-gradient(to right, transparent 0%, rgba(var(--c-sec-rgb), 0.05) 50%, transparent 100%); }
+        .dot-matrix { position: absolute; inset: 0; z-index: 2; transition: all 0.5s ease; opacity: 1; }
+        
+        body[data-bg="classique"] .dot-matrix { background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1.5px, transparent 1.5px); background-size: 32px 32px; mask-image: radial-gradient(circle at center, black 40%, transparent 90%); -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 90%); }
+        body[data-bg="grid"] .dot-matrix { background-image: linear-gradient(rgba(var(--c-prim-light-rgb), 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(var(--c-prim-light-rgb), 0.1) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(circle at center, black 60%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%); }
+        body[data-bg="speed"] .dot-matrix { background-image: repeating-linear-gradient(-45deg, rgba(var(--c-prim-light-rgb), 0.04), rgba(var(--c-prim-light-rgb), 0.04) 4px, transparent 4px, transparent 15px); background-size: 100% 100%; mask-image: linear-gradient(to right, black 20%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 20%, transparent 100%); }
+        body[data-bg="speed"] .beam-1, body[data-bg="speed"] .beam-2 { height: 400px; transform: rotate(-15deg); }
+        body[data-bg="glow"] .dot-matrix { opacity: 0; }
+        body[data-bg="glow"] .beam-1, body[data-bg="glow"] .beam-2 { opacity: 0; }
+        body[data-bg="glow"] .bg-layer::before { background: radial-gradient(circle at 15% 70%, rgba(var(--c-prim-rgb), 0.25) 0%, transparent 60%), radial-gradient(circle at 85% 30%, rgba(var(--c-sec-rgb), 0.25) 0%, transparent 60%), radial-gradient(circle at 50% 50%, rgba(var(--c-prim-light-rgb), 0.05) 0%, transparent 80%), #030107; }
+        body[data-bg="minimal"] .dot-matrix, body[data-bg="minimal"] .beam-1, body[data-bg="minimal"] .beam-2 { opacity: 0; }
+        body[data-bg="minimal"] .bg-layer::before { background: radial-gradient(circle at 50% -20%, rgba(var(--c-prim-rgb), 0.15) 0%, transparent 60%), #030107; }
+
+        .watermark { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); font-family: 'Oswald', sans-serif; font-weight: 700; font-style: italic; font-size: 380px; color: rgba(255, 255, 255, 0.015); white-space: nowrap; letter-spacing: -5px; z-index: 1; }
+        .poster::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%); background-size: 100% 4px; pointer-events: none; z-index: 3; opacity: 0.8; }
+        body[data-bg="minimal"] .poster::after { opacity: 0.2; }
+
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 10; padding-bottom: 25px; margin-bottom: 35px; }
+        .title-group { display: flex; flex-direction: column; }
+        .title-planning { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 88px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #ffffff; line-height: 0.85; text-shadow: 0 0 calc(40px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.9); transition: text-shadow 0.5s; }
+        .title-name { font-family: 'Oswald', sans-serif; font-size: 34px; font-weight: 600; color: var(--c-sec); text-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.6); letter-spacing: 12px; margin-top: 10px; text-transform: uppercase; transition: color 0.5s, text-shadow 0.5s; }
+        
+        .header-badge { 
+            background-color: #1a0b35; border: 2px solid rgba(var(--c-prim-light-rgb), 0.8); border-left: 8px solid var(--c-sec); 
+            border-radius: calc(var(--card-radius) * 0.75); padding: 12px 35px; font-family: 'Oswald', sans-serif; font-style: italic; 
+            font-size: 32px; color: #fff; letter-spacing: 4px; text-transform: uppercase; box-shadow: 0 5px calc(25px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.3); 
+            transition: all 0.5s;
+        }
+
+        /* GRID & CARDS */
+        .grid-days { display: flex; gap: 22px; flex: 1; position: relative; z-index: 10; }
+        .day-col { flex: 1; display: flex; flex-direction: column; }
+        .day-header { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px 8px; border-bottom: 3px solid rgba(var(--c-prim-light-rgb), 0.4); margin-bottom: 16px; position: relative; transition: border-color 0.5s; }
+        .day-header::after { content: ''; position: absolute; bottom: -3px; left: 0; width: 40%; height: 3px; background: var(--c-sec); box-shadow: 0 0 calc(15px * var(--neon-glow)) var(--c-sec); transition: all 0.5s; }
+        .day-name { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 2px; text-shadow: 2px 2px 0 rgba(var(--c-prim-light-rgb), 0.5); transition: text-shadow 0.5s; }
+        .day-date { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 38px; font-weight: 700; color: var(--c-sec); line-height: 0.8; text-shadow: 0 0 calc(15px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.5); transition: all 0.5s; }
+        .day-card { flex: 1; display: flex; flex-direction: column; border-radius: var(--card-radius); overflow: hidden; background: rgba(6, 2, 12, 0.95); border: 1px solid rgba(var(--c-sec-rgb), 0.2); border-top: 4px solid var(--c-sec); box-shadow: 0 15px 35px rgba(0,0,0,0.9), inset 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.05); transition: all 0.5s; }
+
+        .event-block { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 25px 20px; overflow: hidden; }
+        .event-block:not(:last-child)::after { content: ''; position: absolute; bottom: 0; left: 5%; right: 5%; height: 2px; background: linear-gradient(to right, transparent, var(--c-sec), transparent); z-index: 10; box-shadow: 0 0 calc(15px * var(--neon-glow)) var(--c-sec); transition: all 0.5s; }
+        .event-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center top; background-repeat: no-repeat; z-index: 1; }
+        .event-bg.with-effects { filter: saturate(1.3) brightness(0.7) contrast(1.1); }
+        .event-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6, 2, 12, 0.9) 0%, transparent 35%); z-index: 2; }
+        .event-overlay.with-effects { background: linear-gradient(to top, #06020c 10%, rgba(6, 2, 12, 0.5) 65%, transparent 100%); }
+
+        .event-info { position: relative; z-index: 3; display: flex; flex-direction: column; gap: 5px; }
+        .time-wrapper { align-self: flex-start; background: var(--grad-time1); padding: 6px 16px; margin-bottom: 8px; border-left: 4px solid var(--time1-bord); border-radius: calc(var(--card-radius) * 0.5); box-shadow: 0 4px 10px rgba(0,0,0,0.8); transition: all 0.5s; }
+        .time-wrapper.cyan { background: var(--grad-time2); border-left-color: var(--time2-bord); }
+        .time-text { display: block; font-family: 'Oswald', sans-serif; font-style: italic; font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 1px; }
+        
+        .game-title { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 32px; font-weight: 700; color: #fff; text-transform: uppercase; line-height: 1; text-shadow: 0 5px 15px rgba(0,0,0,0.9); letter-spacing: 1px; }
+        .game-sub { font-size: 16px; font-weight: 700; color: var(--time1-bord); text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 2px 5px rgba(0,0,0,0.9); transition: color 0.5s; }
+        .time-wrapper.cyan + .game-title + .game-sub { color: var(--time2-sub); }
+
+        .text-center { text-align: center; align-items: center; justify-content: center; height: 100%; }
+        .text-center .game-title { font-size: 48px; color: #fff; text-shadow: 0 5px calc(25px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.9); transition: text-shadow 0.5s; }
+
+        /* DAY OFF */
+        .day-col.off { opacity: 0.85; }
+        .day-col.off .day-header { border-bottom-color: #4b5563; }
+        .day-col.off .day-header::after { background: #9ca3af; box-shadow: none; }
+        .day-col.off .day-name, .day-col.off .day-date { color: #9ca3af; text-shadow: none; }
+        .day-col.off .day-card { border-color: rgba(var(--c-prim-light-rgb), 0.15); border-top-color: #4b5563; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .event-block.off-block .event-overlay { background: repeating-linear-gradient(45deg, rgba(20, 15, 30, 0.8), rgba(20, 15, 30, 0.8) 15px, rgba(5, 2, 10, 0.9) 15px, rgba(5, 2, 10, 0.9) 30px); }
+        .text-center.off-text .game-title { color: #9ca3af; text-shadow: 0 2px 5px rgba(0,0,0,0.5); letter-spacing: 5px; }
+
+        /* BADGE TWITCH */
+        .twitch-badge { 
+            position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); 
+            background-color: #06020c; border: 2px solid rgba(var(--c-sec-rgb), 0.4); border-right: 8px solid var(--c-sec); 
+            border-radius: var(--card-radius); padding: 10px 35px 10px 30px; display: flex; align-items: center; gap: 15px; z-index: 20; 
+            box-shadow: 0 10px calc(30px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.2); transition: all 0.5s;
+        }
+        .twitch-icon svg { width: 28px; height: 28px; fill: #fff; display: block; }
+        .twitch-text { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 2px; padding-top: 3px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
+
+        @media (max-width: 1600px) { .poster { zoom: 0.55; } }
+        @media (max-width: 1300px) { .poster { zoom: 0.45; } }
+        
+        /* MODE CAPTURE F12 */
+        body.capture-mode .sidebar { display: none; }
+        body.capture-mode { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; background: #05020a; }
+        body.capture-mode .preview-area { width: 1920px; height: 1080px; padding: 0; margin: 0; display: block; overflow: hidden; }
+        body.capture-mode .poster { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; zoom: 1 !important; transform: none !important; }
+    </style>
+</head>
+<body data-theme="cyberpunk" data-bg="classique">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar">
+        <h2>
+            <span>🛠️ Globaux</span>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button class="btn-reset" onclick="localStorage.removeItem('squadir_planning_save'); location.reload();" title="Effacer la sauvegarde et remettre par défaut">🔄 Reset</button>
+                <span id="save-status" style="font-size: 13px; color: #00ff00; font-family: 'Rajdhani', sans-serif; text-transform: none; letter-spacing: 0;">🟢 Prêt</span>
+            </div>
+        </h2>
+        
+        <div style="display: flex; gap: 10px; align-items: flex-end;">
+            <div class="form-group" style="flex: 1;">
+                <label>🎨 Thème Couleur</label>
+                <select id="select-theme" onchange="changeTheme(this.value)" style="border: 1px solid var(--c-sec); color: #fff; font-weight: bold;">
+                    <option value="cyberpunk">🟣 Cyberpunk</option>
+                    <option value="inferno">🔥 Inferno</option>
+                    <option value="toxic">☣️ Toxic</option>
+                    <option value="glacier">❄️ Glacier</option>
+                    <option value="gold">👑 Prestige</option>
+                    <option value="custom">🎨 Personnalisé</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="flex: 1;">
+                <label>🖼️ Style de Fond</label>
+                <select id="select-bg" onchange="updateBg(this.value)" style="border: 1px solid rgb(var(--c-prim-light-rgb)); color: #fff; font-weight: bold;">
+                    <option value="classique">🌃 Classique</option>
+                    <option value="grid">🌐 Tech Grid</option>
+                    <option value="speed">⚡ Vitesse</option>
+                    <option value="glow">✨ Aura (Doux)</option>
+                    <option value="minimal">🌑 Minimaliste</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="custom-color-panel" style="display: none; gap: 10px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);">
+            <div class="form-group" style="flex: 1;">
+                <label>Primaire</label>
+                <input type="color" id="color-prim" value="#ff00a0" oninput="applyCustomColors()">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Secondaire</label>
+                <input type="color" id="color-sec" value="#00ffcc" oninput="applyCustomColors()">
+            </div>
+        </div>
+
+        <div class="split-divider"></div>
+
+        <div class="form-group">
+            <label style="color: var(--c-sec);">✨ Puissance Néon (Lumière)</label>
+            <input id="range-neon" type="range" min="0" max="2" step="0.1" value="1" oninput="updateNeon(this.value)">
+        </div>
+        <div class="form-group">
+            <label style="color: rgb(var(--c-prim-light-rgb));">🔲 Style des cases (Carré → Arrondi)</label>
+            <input id="range-radius" type="range" min="0" max="30" step="1" value="8" oninput="updateRadius(this.value)">
+        </div>
+
+        <div class="split-divider"></div>
+
+        <div class="form-group">
+            <label>Nom en haut à gauche</label>
+<input id="input-name" type="text" value="SIMPLEMENTPAULINE" oninput="updateGlobal('name', this.value)">        </div>
+        <div class="form-group">
+            <label>Pseudo Twitch</label>
+            <input id="input-twitch" type="text" value="SIMPLEMENTPAULINE" oninput="updateGlobal('twitch', this.value)">
+        </div>
+        <div class="form-group">
+            <label>Mois / Année</label>
+            <input id="input-date" type="text" value="AOUT 2026" oninput="updateGlobal('date', this.value)">
+        </div>
+
+        <div id="sidebar-days-container"></div> 
+
+        <button class="f12-btn" onclick="document.body.classList.add('capture-mode')">📸 Masquer le Menu pour Capturer</button>
+        
+        <div class="f12-help">
+            1. Configure tout ton planning.<br>
+            2. Clique sur le bouton ci-dessus.<br>
+            3. Fais ton <b>F12</b> -> dérouler <br><code>&lt;main class="preview-area" id="preview-area"&gt; &lt;/main&gt;</code><br>
+            4. Clique droit sur <br><code>&lt;div class="poster" id="poster-capture"&gt; &lt;/div&gt;</code><br>
+            5. Clique sur <b>Capture node screenshot</b><br>
+            6. <i>Appuie sur <b>F5</b> pour retrouver le menu.</i>
+        </div>
+    </aside>
+
+    <!-- ═══ AFFICHE ═══ -->
+    <main class="preview-area" id="preview-area">
+        <div class="poster" id="poster-capture">
+            
+            <div class="bg-layer">
+                <div class="beam-1"></div><div class="beam-2"></div>
+<div class="watermark" id="display-watermark">SIMPLEMENTPAULINE</div>                <div class="dot-matrix"></div>
+            </div>
+
+            <header class="header">
+                <div class="title-group">
+                    <div class="title-planning">PLANNING</div>
+                    <div class="title-name" id="display-name">SIMPLEMENTPAULINE</div>
+                </div>
+                <div class="header-badge" id="display-date">AOUT 2026</div>
+            </header>
+
+            <div class="grid-days" id="poster-grid-container"></div> 
+
+            <div class="twitch-badge">
+                <div class="twitch-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.265 3 3 6.236v13.223h5.154V23l3.417-3.541h3.795L21 13.626V3H4.265zm15.044 9.68-2.656 2.76H12.1l-2.656 2.75v-2.75H5.53V4.69h13.78v7.99z"/>
+                        <path d="M11.344 7.45h2.276v4.83h-2.276zM15.14 7.45h2.275v4.83H15.14z"/>
+                    </svg>
+                </div>
+                <span class="twitch-text" id="display-twitch">TWITCH.TV/SIMPLEMENTPAULINE</span>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ═══ JAVASCRIPT ═══ -->
+    <script>
+        const placeholderImg = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="; 
+        let isAppReady = false;
+        let saveTimeout;
+        
+        // ICI TES IMAGES D'ORIGINE SONT REMISES PAR DEFAUT !
+        let schedule = [
+            { id: 0, name: 'LUNDI', date: '3', type: 'libre', img1: 'stream.png', time1: '18H00', title1: 'STREAM<br>LIBRE' },
+            { id: 1, name: 'MARDI', date: '4', type: 'split', img1: 'imagemardi.png', time1: '19H00', title1: 'REACT', sub1: 'debut concours été RELOAD', img2: 'f1.jpg', time2: '21H00', title2: 'F1 25', sub2: 'VIEWERS' },
+            { id: 2, name: 'MERCREDI', date: '5', type: 'off' },
+            { id: 3, name: 'JEUDI', date: '6', type: 'single', img1: 'perf.png', time1: '19H00', title1: 'FORTNITE', sub1: 'PERFORMANCE CUP' },
+            { id: 4, name: 'VENDREDI', date: '7', type: 'single', img1: 'imagevendredi.png', time1: '19H00', title1: 'Soirée Horreur', sub1: 'J\'ai peur' },
+            { id: 5, name: 'SAMEDI', date: '8', type: 'single', img1: 'bombe.png', time1: '15H00', title1: 'BOMBANANA!', sub1: 'AVEC KASH & WALID' },
+            { id: 6, name: 'DIMANCHE', date: '9', type: 'split', img1: 'imagedimancge.png', time1: '14H00', title1: 'On fete l\'été ', sub1: 'et on peint', img2: 'pillars.jpg', time2: '23H00', title2: 'PILLARS', sub2: 'GAMES VIEWERS' }
+        ];
+
+        /* --- SAUVEGARDE AUTO --- */
+        function saveConfig() {
+            if (!isAppReady) return;
+            const config = {
+                theme: document.getElementById('select-theme').value,
+                bg: document.getElementById('select-bg').value,
+                neon: document.getElementById('range-neon').value,
+                radius: document.getElementById('range-radius').value,
+                cp: document.getElementById('color-prim').value,
+                cs: document.getElementById('color-sec').value,
+                name: document.getElementById('input-name').value,
+                twitch: document.getElementById('input-twitch').value,
+                date: document.getElementById('input-date').value,
+                schedule: schedule
+            };
+
+            const status = document.getElementById('save-status');
+            try {
+                localStorage.setItem('squadir_planning_save', JSON.stringify(config));
+                status.innerText = "🟢 Sauvegardé";
+                status.style.color = "#00ff00";
+            } catch (e) {
+                status.innerText = "🔴 Images trop lourdes";
+                status.style.color = "#ff3333";
+                console.warn("Quota dépassé : impossible de sauvegarder les images si elles sont trop volumineuses.");
+            }
+            
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                if(status.innerText === "🟢 Sauvegardé") status.innerText = "🟢 Auto-save activé";
+            }, 2000);
+        }
+
+        function loadConfig() {
+            const saved = localStorage.getItem('squadir_planning_save');
+            if (saved) {
+                try {
+                    const config = JSON.parse(saved);
+                    
+                    if (config.theme) document.getElementById('select-theme').value = config.theme;
+                    if (config.bg) document.getElementById('select-bg').value = config.bg;
+                    if (config.neon) document.getElementById('range-neon').value = config.neon;
+                    if (config.radius) document.getElementById('range-radius').value = config.radius;
+                    if (config.cp) document.getElementById('color-prim').value = config.cp;
+                    if (config.cs) document.getElementById('color-sec').value = config.cs;
+                    if (config.name) document.getElementById('input-name').value = config.name;
+                    if (config.twitch) document.getElementById('input-twitch').value = config.twitch;
+                    if (config.date) document.getElementById('input-date').value = config.date;
+
+                    if (config.schedule) schedule = config.schedule;
+
+                    changeTheme(config.theme || 'cyberpunk');
+                    document.body.setAttribute('data-bg', config.bg || 'classique');
+                    document.body.style.setProperty('--neon-glow', config.neon || "1");
+                    document.body.style.setProperty('--card-radius', (config.radius || "8") + 'px');
+                    
+                    if (config.theme === 'custom') applyCustomColors();
+
+                    updateGlobal('name', config.name || "SIMPLEMENTPAULINE");
+updateGlobal('twitch', config.twitch || "SIMPLEMENTPAULINE");
+                    updateGlobal('date', config.date || "AOUT 2026");
+                } catch (e) {
+                    console.error("Erreur chargement sauvegarde", e);
+                }
+            }
+            renderSidebar();
+            renderGrid();
+            isAppReady = true; // Active la sauvegarde à partir de maintenant
+        }
+
+        /* --- OUTILS --- */
+        function hexToRgb(hex) {
+            let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : null;
+        }
+
+        function changeTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            if (theme === 'custom') {
+                document.getElementById('custom-color-panel').style.display = 'flex';
+                applyCustomColors();
+            } else {
+                document.getElementById('custom-color-panel').style.display = 'none';
+                document.body.style.removeProperty('--c-prim');
+                document.body.style.removeProperty('--c-prim-rgb');
+                document.body.style.removeProperty('--c-prim-light-rgb');
+                document.body.style.removeProperty('--c-sec');
+                document.body.style.removeProperty('--c-sec-rgb');
+                document.body.style.removeProperty('--grad-time1');
+                document.body.style.removeProperty('--grad-time2');
+                document.body.style.removeProperty('--time1-bord');
+                document.body.style.removeProperty('--time2-bord');
+                document.body.style.removeProperty('--time2-sub');
+                document.body.style.removeProperty('--time2-txt');
+            }
+            saveConfig();
+        }
+
+        function applyCustomColors() {
+            if(document.body.getAttribute('data-theme') !== 'custom') return;
+            const prim = document.getElementById('color-prim').value;
+            const sec = document.getElementById('color-sec').value;
+            const rgbPrim = hexToRgb(prim);
+            const rgbSec = hexToRgb(sec);
+            
+            document.body.style.setProperty('--c-prim', prim);
+            document.body.style.setProperty('--c-prim-rgb', rgbPrim);
+            document.body.style.setProperty('--c-prim-light-rgb', rgbPrim);
+            document.body.style.setProperty('--c-sec', sec);
+            document.body.style.setProperty('--c-sec-rgb', rgbSec);
+            
+            document.body.style.setProperty('--grad-time1', `linear-gradient(to right, ${prim}, rgba(${rgbPrim}, 0.5))`);
+            document.body.style.setProperty('--time1-bord', '#ffffff');
+            document.body.style.setProperty('--grad-time2', `linear-gradient(to right, ${sec}, rgba(${rgbSec}, 0.4))`);
+            document.body.style.setProperty('--time2-bord', '#ffffff');
+            document.body.style.setProperty('--time2-txt', '#000');
+            document.body.style.setProperty('--time2-sub', sec);
+            saveConfig();
+        }
+
+        function updateBg(bg) { document.body.setAttribute('data-bg', bg); saveConfig(); }
+        function updateNeon(val) { document.body.style.setProperty('--neon-glow', val); saveConfig(); }
+        function updateRadius(val) { document.body.style.setProperty('--card-radius', val + 'px'); saveConfig(); }
+
+        function updateData(dayId, field, value) {
+            schedule[dayId][field] = value;
+            renderGrid(); 
+            saveConfig();
+        }
+
+        function updateType(dayId, newType) {
+            schedule[dayId].type = newType;
+            if(!schedule[dayId].title1) schedule[dayId].title1 = "TITRE";
+            if(!schedule[dayId].sub1) schedule[dayId].sub1 = "SOUS-TITRE";
+            if(!schedule[dayId].time1) schedule[dayId].time1 = "20H00";
+            if(newType === 'split' && !schedule[dayId].title2) {
+                schedule[dayId].title2 = "JEU 2"; schedule[dayId].sub2 = "INFO"; schedule[dayId].time2 = "22H00";
+            }
+            renderSidebar(); 
+            renderGrid();    
+            saveConfig();
+        }
+
+        function handleImageUpload(input, dayId, imageField) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    schedule[dayId][imageField] = e.target.result; 
+                    renderGrid(); 
+                    saveConfig();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateGlobal(target, value) {
+            if(target === 'name') {
+                document.getElementById('display-name').innerText = value;
+                document.getElementById('display-watermark').innerText = value;
+            } else if (target === 'twitch') {
+                document.getElementById('display-twitch').innerText = "TWITCH.TV/" + value;
+            } else if (target === 'date') {
+                document.getElementById('display-date').innerText = value;
+            }
+            saveConfig();
+        }
+
+        /* --- RENDU --- */
+        function renderSidebar() {
+            const container = document.getElementById('sidebar-days-container');
+            container.innerHTML = ''; 
+            schedule.forEach((day, index) => {
+                let html = `
+                <details>
+                    <summary>📅 ${day.name}</summary>
+                    <div class="details-content">
+                        <div class="form-group">
+                            <label>Format de la journée</label>
+                            <select onchange="updateType(${index}, this.value)">
+                                <option value="single" ${day.type === 'single' ? 'selected' : ''}>Jeu Unique</option>
+                                <option value="split" ${day.type === 'split' ? 'selected' : ''}>Split (2 Jeux)</option>
+                                <option value="libre" ${day.type === 'libre' ? 'selected' : ''}>Stream Libre</option>
+                                <option value="off" ${day.type === 'off' ? 'selected' : ''}>Day Off</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Date (Numéro)</label>
+                            <input type="text" value="${day.date || ''}" oninput="updateData(${index}, 'date', this.value)">
+                        </div>`;
+
+                if (day.type === 'single') {
+                    html += `
+                        <div class="form-group"><label>Heure</label><input type="text" value="${day.time1 || ''}" oninput="updateData(${index}, 'time1', this.value)"></div>
+                        <div class="form-group"><label>Titre (Jeu)</label><input type="text" value="${day.title1 || ''}" oninput="updateData(${index}, 'title1', this.value)"></div>
+                        <div class="form-group"><label>Sous-titre</label><input type="text" value="${day.sub1 || ''}" oninput="updateData(${index}, 'sub1', this.value)"></div>
+                        <div class="form-group">
+                            <label>Image de fond</label>
+                            <label class="upload-btn">📁 Uploader une image<input type="file" accept="image/*" onchange="handleImageUpload(this, ${index}, 'img1')"></label>
+                        </div>`;
+                } else if (day.type === 'split') {
+                    html += `
+                        <div class="split-divider"></div><label style="color:var(--c-sec);">▶ JEU 1 (HAUT)</label>
+                        <div class="form-group"><label>Heure</label><input type="text" value="${day.time1 || ''}" oninput="updateData(${index}, 'time1', this.value)"></div>
+                        <div class="form-group"><label>Titre</label><input type="text" value="${day.title1 || ''}" oninput="updateData(${index}, 'title1', this.value)"></div>
+                        <div class="form-group"><label>Sous-titre</label><input type="text" value="${day.sub1 || ''}" oninput="updateData(${index}, 'sub1', this.value)"></div>
+                        <div class="form-group">
+                            <label class="upload-btn">📁 Uploader Image 1<input type="file" accept="image/*" onchange="handleImageUpload(this, ${index}, 'img1')"></label>
+                        </div>
+                        
+                        <div class="split-divider"></div><label style="color:rgb(var(--c-prim-light-rgb));">▶ JEU 2 (BAS)</label>
+                        <div class="form-group"><label>Heure</label><input type="text" value="${day.time2 || ''}" oninput="updateData(${index}, 'time2', this.value)"></div>
+                        <div class="form-group"><label>Titre</label><input type="text" value="${day.title2 || ''}" oninput="updateData(${index}, 'title2', this.value)"></div>
+                        <div class="form-group"><label>Sous-titre</label><input type="text" value="${day.sub2 || ''}" oninput="updateData(${index}, 'sub2', this.value)"></div>
+                        <div class="form-group">
+                            <label class="upload-btn">📁 Uploader Image 2<input type="file" accept="image/*" onchange="handleImageUpload(this, ${index}, 'img2')"></label>
+                        </div>`;
+                } else if (day.type === 'libre') {
+                    html += `
+                        <div class="form-group"><label>Heure</label><input type="text" value="${day.time1 || ''}" oninput="updateData(${index}, 'time1', this.value)"></div>
+                        <div class="form-group"><label>Gros Titre (&lt;br&gt; = saut ligne)</label><input type="text" value="${day.title1 || ''}" oninput="updateData(${index}, 'title1', this.value)"></div>
+                        <div class="form-group">
+                            <label>Image de fond (Effet Sombre)</label>
+                            <label class="upload-btn">📁 Uploader une image<input type="file" accept="image/*" onchange="handleImageUpload(this, ${index}, 'img1')"></label>
+                        </div>`;
+                }
+                html += `</div></details>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('poster-grid-container');
+            grid.innerHTML = '';
+            schedule.forEach(day => {
+                let cardHTML = `<div class="day-col ${day.type === 'off' ? 'off' : ''}">
+                    <div class="day-header"><span class="day-name">${day.name}</span><span class="day-date">${day.date}</span></div>
+                    <div class="day-card">`;
+
+                if (day.type === 'off') {
+                    cardHTML += `<div class="event-block off-block"><div class="event-overlay"></div><div class="event-info text-center off-text"><span class="game-title">DAY<br>OFF</span></div></div>`;
+                } else if (day.type === 'libre') {
+                    cardHTML += `
+                        <div class="event-block">
+                            <div class="event-bg with-effects" style="background-image: url('${day.img1 || placeholderImg}')"></div>
+                            <div class="event-overlay with-effects"></div>
+                            <div class="event-info text-center">
+                                <div class="time-wrapper" style="align-self: center; margin-bottom: 12px;"><span class="time-text">${day.time1 || ''}</span></div>
+                                <span class="game-title">${day.title1 || ''}</span>
+                            </div>
+                        </div>`;
+                } else if (day.type === 'single') {
+                    cardHTML += `
+                        <div class="event-block">
+                            <div class="event-bg" style="background-image: url('${day.img1 || placeholderImg}')"></div>
+                            <div class="event-overlay"></div>
+                            <div class="event-info">
+                                <div class="time-wrapper"><span class="time-text">${day.time1 || ''}</span></div>
+                                <span class="game-title">${day.title1 || ''}</span>
+                                <span class="game-sub">${day.sub1 || ''}</span>
+                            </div>
+                        </div>`;
+                } else if (day.type === 'split') {
+                    cardHTML += `
+                        <div class="event-block">
+                            <div class="event-bg" style="background-image: url('${day.img1 || placeholderImg}')"></div>
+                            <div class="event-overlay"></div>
+                            <div class="event-info">
+                                <div class="time-wrapper"><span class="time-text">${day.time1 || ''}</span></div>
+                                <span class="game-title">${day.title1 || ''}</span>
+                                <span class="game-sub">${day.sub1 || ''}</span>
+                            </div>
+                        </div>
+                        <div class="event-block">
+                            <div class="event-bg" style="background-image: url('${day.img2 || placeholderImg}')"></div>
+                            <div class="event-overlay"></div>
+                            <div class="event-info">
+                                <div class="time-wrapper cyan"><span class="time-text" style="color:var(--time2-txt);">${day.time2 || ''}</span></div>
+                                <span class="game-title">${day.title2 || ''}</span>
+                                <span class="game-sub">${day.sub2 || ''}</span>
+                            </div>
+                        </div>`;
+                }
+                cardHTML += `</div></div>`;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        // Lancement au démarrage
+        loadConfig();
+    </script>
+</body>
+</html>
