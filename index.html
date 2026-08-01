@@ -221,7 +221,7 @@
         body.capture-mode .poster { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; zoom: 1 !important; transform: none !important; }
     </style>
 </head>
-<body data-theme="cyberpunk" data-bg="classique">
+<body data-theme="custom" data-bg="minimal">
 
     <!-- ═══ SIDEBAR ═══ -->
     <aside class="sidebar">
@@ -402,36 +402,42 @@
 
         function loadConfig() {
             const saved = localStorage.getItem('squadir_planning_save');
+            let config = {};
             if (saved) {
                 try {
-                    const config = JSON.parse(saved);
-                    
-                    if (config.theme) document.getElementById('select-theme').value = config.theme;
-                    if (config.bg) document.getElementById('select-bg').value = config.bg;
-                    if (config.neon) document.getElementById('range-neon').value = config.neon;
-                    if (config.radius) document.getElementById('range-radius').value = config.radius;
-                    if (config.cp) document.getElementById('color-prim').value = config.cp;
-                    if (config.cs) document.getElementById('color-sec').value = config.cs;
-                    if (config.name) document.getElementById('input-name').value = config.name;
-                    if (config.twitch) document.getElementById('input-twitch').value = config.twitch;
-                    if (config.date) document.getElementById('input-date').value = config.date;
-
-                    if (config.schedule) schedule = config.schedule;
-
-                    changeTheme(config.theme || 'cyberpunk');
-                    document.body.setAttribute('data-bg', config.bg || 'classique');
-                    document.body.style.setProperty('--neon-glow', config.neon || "1");
-                    document.body.style.setProperty('--card-radius', (config.radius || "8") + 'px');
-                    
-                    if (config.theme === 'custom') applyCustomColors();
-
-                    updateGlobal('name', config.name || "SIMPLEMENTPAULINE");
-                    updateGlobal('twitch', config.twitch || "SIMPLEMENTPAULINE");
-                    updateGlobal('date', config.date || "AOUT 2026");
+                    config = JSON.parse(saved);
                 } catch (e) {
                     console.error("Erreur chargement sauvegarde", e);
                 }
             }
+
+            // MODIFICATION ICI : On applique les choix par défaut si rien n'est sauvegardé
+            document.getElementById('select-theme').value = config.theme || 'custom';
+            document.getElementById('select-bg').value = config.bg || 'minimal';
+            
+            if (config.neon) document.getElementById('range-neon').value = config.neon;
+            if (config.radius) document.getElementById('range-radius').value = config.radius;
+            if (config.cp) document.getElementById('color-prim').value = config.cp;
+            if (config.cs) document.getElementById('color-sec').value = config.cs;
+            
+            document.getElementById('input-name').value = config.name || "SIMPLEMENTPAULINE";
+            document.getElementById('input-twitch').value = config.twitch || "SIMPLEMENTPAULINE";
+            document.getElementById('input-date').value = config.date || "AOUT 2026";
+
+            if (config.schedule) schedule = config.schedule;
+
+            // Application visuelle des paramètres au lancement
+            changeTheme(config.theme || 'custom');
+            document.body.setAttribute('data-bg', config.bg || 'minimal');
+            document.body.style.setProperty('--neon-glow', config.neon || "1");
+            document.body.style.setProperty('--card-radius', (config.radius || "8") + 'px');
+            
+            if ((config.theme || 'custom') === 'custom') applyCustomColors();
+
+            updateGlobal('name', config.name || "SIMPLEMENTPAULINE");
+            updateGlobal('twitch', config.twitch || "SIMPLEMENTPAULINE");
+            updateGlobal('date', config.date || "AOUT 2026");
+
             renderSidebar();
             renderGrid();
             isAppReady = true; // Active la sauvegarde à partir de maintenant
