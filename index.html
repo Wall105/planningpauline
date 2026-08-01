@@ -101,13 +101,13 @@
 
         /* ─── PREVIEW & POSTER ─── */
         .preview-area { flex: 1; display: flex; justify-content: center; align-items: flex-start; overflow: auto; padding: 20px; }
-        body.capture-mode .poster { transform: none; }
+        body.capture-mode .poster { transform: none !important; }
         .poster { 
             width: 1920px; height: 1080px; background-color: #05020a; position: relative; overflow: hidden; padding: 45px 60px 85px; display: flex; flex-direction: column;
             transform: scale(0.60); transform-origin: top center;
             border: 3px solid var(--c-prim);
             box-shadow: inset 0 0 calc(150px * var(--neon-glow)) rgba(var(--c-prim-rgb), 0.2), 0 0 calc(40px * var(--neon-glow)) rgba(var(--c-prim-rgb), 0.4);
-            flex-shrink: 0; transition: border-color 0.5s, box-shadow 0.5s;
+            flex-shrink: 0; transition: border-color 0.5s, box-shadow 0.5s, width 0.3s, height 0.3s;
         }
 
         /* ─── GESTION DES FONDS (BACKGROUNDS) ─── */
@@ -128,11 +128,11 @@
         body[data-bg="minimal"] .dot-matrix, body[data-bg="minimal"] .beam-1, body[data-bg="minimal"] .beam-2 { opacity: 0; }
         body[data-bg="minimal"] .bg-layer::before { background: radial-gradient(circle at 50% -20%, rgba(var(--c-prim-rgb), 0.15) 0%, transparent 60%), #030107; }
 
-        .watermark { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); font-family: 'Oswald', sans-serif; font-weight: 700; font-style: italic; font-size: 380px; color: rgba(255, 255, 255, 0.015); white-space: nowrap; letter-spacing: -5px; z-index: 1; }
+        .watermark { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); font-family: 'Oswald', sans-serif; font-weight: 700; font-style: italic; font-size: 380px; color: rgba(255, 255, 255, 0.015); white-space: nowrap; letter-spacing: -5px; z-index: 1; transition: 0.3s; }
         .poster::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(255,255,255,0) 50%, rgba(0,0,0,0.3) 50%); background-size: 100% 4px; pointer-events: none; z-index: 3; opacity: 0.8; }
         body[data-bg="minimal"] .poster::after { opacity: 0.2; }
 
-        /* HEADER */
+        /* HEADER PAYSAGE (Normal) */
         .header { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 10; padding-bottom: 25px; margin-bottom: 35px; }
         .title-group { display: flex; flex-direction: column; }
         .title-planning { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 88px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #ffffff; line-height: 0.85; text-shadow: 0 0 calc(40px * var(--neon-glow)) rgba(var(--c-prim-light-rgb), 0.9); transition: text-shadow 0.5s; }
@@ -145,26 +145,10 @@
             transition: all 0.5s;
         }
         
-        /* IMAGE PAULINE HEADER (Agrandie) */
-        .header-avatar {
-            height: 180px; 
-            width: 180px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 3px solid var(--c-sec);
-            box-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.6);
-            background-color: #000;
-        }
+        .header-avatar { height: 180px; width: 180px; object-fit: cover; border-radius: 50%; border: 3px solid var(--c-sec); box-shadow: 0 0 calc(20px * var(--neon-glow)) rgba(var(--c-sec-rgb), 0.6); background-color: #000; }
+        .header-mascot { height: 180px; width: auto; object-fit: contain; }
 
-        /* MASCOTTE CHAT (Sans contour) */
-        .header-mascot {
-            height: 180px; /* Aligné sur la taille de Pauline */
-            width: auto;
-            object-fit: contain;
-            /* Sans bordure, sans shadow */
-        }
-
-        /* GRID & CARDS */
+        /* GRID & CARDS PAYSAGE (Normal) */
         .grid-days { display: flex; gap: 22px; flex: 1; position: relative; z-index: 10; }
         .day-col { flex: 1; display: flex; flex-direction: column; }
         .day-header { display: flex; justify-content: space-between; align-items: flex-end; padding: 0 5px 8px; border-bottom: 3px solid rgba(var(--c-prim-light-rgb), 0.4); margin-bottom: 16px; position: relative; transition: border-color 0.5s; }
@@ -211,14 +195,60 @@
         .twitch-icon svg { width: 28px; height: 28px; fill: #fff; display: block; }
         .twitch-text { font-family: 'Oswald', sans-serif; font-style: italic; font-size: 26px; font-weight: 700; color: #fff; letter-spacing: 2px; padding-top: 3px; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-        @media (max-width: 1600px) { .poster { zoom: 0.55; } }
-        @media (max-width: 1300px) { .poster { zoom: 0.45; } }
+        /* ─── NOUVEAU : MODE VERTICAL (Tiktok, Reels, Shorts) ─── */
+        body.vertical-mode .poster { width: 1080px; height: 1920px; padding: 40px 30px 100px; transform: scale(0.40); }
+        body.vertical-mode .header { flex-direction: column; align-items: center; text-align: center; gap: 15px; margin-bottom: 25px; padding-bottom: 0; }
+        body.vertical-mode .title-group { align-items: center; }
+        body.vertical-mode .header > div:first-child { flex-direction: column; }
+        body.vertical-mode .header-mascot { height: 130px; margin-top: 10px; }
+        body.vertical-mode .header-avatar { height: 120px; width: 120px; }
+        body.vertical-mode .header-badge { font-size: 28px; padding: 10px 25px; }
+        body.vertical-mode .watermark { transform: translate(-50%, -50%) rotate(-90deg); font-size: 250px; opacity: 0.02; letter-spacing: 5px; }
+        
+        body.vertical-mode .grid-days { flex-direction: column; gap: 15px; }
+        body.vertical-mode .day-col { flex-direction: row; height: 100%; align-items: stretch; gap: 15px; }
+        body.vertical-mode .day-header { 
+            flex-direction: column; justify-content: center; align-items: flex-end; text-align: right; 
+            width: 140px; border-bottom: none; border-right: 3px solid rgba(var(--c-prim-light-rgb), 0.4); 
+            padding: 0 15px 0 0; margin-bottom: 0; 
+        }
+        body.vertical-mode .day-header::after { top: auto; bottom: 20%; left: auto; right: -3px; width: 3px; height: 60%; }
+        body.vertical-mode .day-col.off .day-header { border-right-color: #4b5563; border-bottom-color: transparent; }
+        
+        body.vertical-mode .day-card { flex-direction: row; flex: 1; border-top: none; border-left: 4px solid var(--c-sec); }
+        body.vertical-mode .day-col.off .day-card { border-left-color: #4b5563; }
+        
+        body.vertical-mode .event-block { padding: 15px; }
+        body.vertical-mode .event-block:not(:last-child)::after {
+            bottom: 5%; top: 5%; left: auto; right: 0; width: 2px; height: auto;
+            background: linear-gradient(to bottom, transparent, var(--c-sec), transparent);
+        }
+        body.vertical-mode .event-bg { background-position: center center; }
+        body.vertical-mode .event-overlay { background: linear-gradient(to top, rgba(6, 2, 12, 0.95) 0%, rgba(6, 2, 12, 0.4) 50%, transparent 100%); }
+        body.vertical-mode .time-wrapper { margin-bottom: 4px; padding: 4px 12px; }
+        body.vertical-mode .time-text { font-size: 18px; }
+        body.vertical-mode .game-title { font-size: 26px; }
+        body.vertical-mode .game-sub { font-size: 14px; }
+        body.vertical-mode .text-center .game-title { font-size: 34px; }
+        body.vertical-mode .twitch-badge { bottom: 25px; padding: 8px 30px 8px 25px; }
+
+        @media (max-width: 1600px) { 
+            .poster { zoom: 0.55; } 
+            body.vertical-mode .poster { zoom: 0.50; }
+        }
+        @media (max-width: 1300px) { 
+            .poster { zoom: 0.45; } 
+            body.vertical-mode .poster { zoom: 0.40; }
+        }
         
         /* MODE CAPTURE F12 */
         body.capture-mode .sidebar { display: none; }
         body.capture-mode { margin: 0; padding: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; background: #05020a; }
+        body.capture-mode.vertical-mode { width: 1080px; height: 1920px; }
         body.capture-mode .preview-area { width: 1920px; height: 1080px; padding: 0; margin: 0; display: block; overflow: hidden; }
+        body.capture-mode.vertical-mode .preview-area { width: 1080px; height: 1920px; }
         body.capture-mode .poster { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; zoom: 1 !important; transform: none !important; }
+        body.capture-mode.vertical-mode .poster { width: 1080px; height: 1920px; }
     </style>
 </head>
 <body data-theme="custom" data-bg="minimal">
@@ -233,6 +263,15 @@
             </div>
         </h2>
         
+        <!-- NOUVEAU : TOGGLE FORMAT -->
+        <div class="form-group" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; border: 1px solid var(--c-sec);">
+            <label style="color: var(--c-sec);">📱 Format de l'image (Orientation)</label>
+            <select id="select-format" onchange="updateFormat(this.value)" style="border: none; font-size: 16px;">
+                <option value="horizontal">🖥️ Paysage (1920x1080) - Twitch/Twitter</option>
+                <option value="vertical">📱 Portrait (1080x1920) - Tiktok/Reels/Story</option>
+            </select>
+        </div>
+
         <div style="display: flex; gap: 10px; align-items: flex-end;">
             <div class="form-group" style="flex: 1;">
                 <label>🎨 Thème Couleur</label>
@@ -319,14 +358,12 @@
                 <div class="dot-matrix"></div>
             </div>
 
-            <!-- MODIFICATION ICI : IMAGE CHAT.GIF A DROITE DU TITRE ET IMAGE PAULINE AGRANDIE -->
             <header class="header">
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <div class="title-group">
                         <div class="title-planning">PLANNING</div>
                         <div class="title-name" id="display-name">SIMPLEMENTPAULINE</div>
                     </div>
-                    <!-- AJOUT DU CHAT -->
                     <img src="chat.gif" alt="Mascotte Chat" class="header-mascot">
                 </div>
                 
@@ -371,6 +408,7 @@
         function saveConfig() {
             if (!isAppReady) return;
             const config = {
+                format: document.getElementById('select-format').value,
                 theme: document.getElementById('select-theme').value,
                 bg: document.getElementById('select-bg').value,
                 neon: document.getElementById('range-neon').value,
@@ -411,7 +449,7 @@
                 }
             }
 
-            // MODIFICATION ICI : On applique les choix par défaut si rien n'est sauvegardé
+            document.getElementById('select-format').value = config.format || 'horizontal';
             document.getElementById('select-theme').value = config.theme || 'custom';
             document.getElementById('select-bg').value = config.bg || 'minimal';
             
@@ -427,6 +465,7 @@
             if (config.schedule) schedule = config.schedule;
 
             // Application visuelle des paramètres au lancement
+            updateFormat(config.format || 'horizontal');
             changeTheme(config.theme || 'custom');
             document.body.setAttribute('data-bg', config.bg || 'minimal');
             document.body.style.setProperty('--neon-glow', config.neon || "1");
@@ -447,6 +486,15 @@
         function hexToRgb(hex) {
             let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : null;
+        }
+
+        function updateFormat(format) {
+            if(format === 'vertical') {
+                document.body.classList.add('vertical-mode');
+            } else {
+                document.body.classList.remove('vertical-mode');
+            }
+            saveConfig();
         }
 
         function changeTheme(theme) {
@@ -575,7 +623,7 @@
                         </div>`;
                 } else if (day.type === 'split') {
                     html += `
-                        <div class="split-divider"></div><label style="color:var(--c-sec);">▶ JEU 1 (HAUT)</label>
+                        <div class="split-divider"></div><label style="color:var(--c-sec);">▶ JEU 1 (HAUT/GAUCHE)</label>
                         <div class="form-group"><label>Heure</label><input type="text" value="${day.time1 || ''}" oninput="updateData(${index}, 'time1', this.value)"></div>
                         <div class="form-group"><label>Titre</label><input type="text" value="${day.title1 || ''}" oninput="updateData(${index}, 'title1', this.value)"></div>
                         <div class="form-group"><label>Sous-titre</label><input type="text" value="${day.sub1 || ''}" oninput="updateData(${index}, 'sub1', this.value)"></div>
@@ -583,7 +631,7 @@
                             <label class="upload-btn">📁 Uploader Image 1<input type="file" accept="image/*" onchange="handleImageUpload(this, ${index}, 'img1')"></label>
                         </div>
                         
-                        <div class="split-divider"></div><label style="color:rgb(var(--c-prim-light-rgb));">▶ JEU 2 (BAS)</label>
+                        <div class="split-divider"></div><label style="color:rgb(var(--c-prim-light-rgb));">▶ JEU 2 (BAS/DROITE)</label>
                         <div class="form-group"><label>Heure</label><input type="text" value="${day.time2 || ''}" oninput="updateData(${index}, 'time2', this.value)"></div>
                         <div class="form-group"><label>Titre</label><input type="text" value="${day.title2 || ''}" oninput="updateData(${index}, 'title2', this.value)"></div>
                         <div class="form-group"><label>Sous-titre</label><input type="text" value="${day.sub2 || ''}" oninput="updateData(${index}, 'sub2', this.value)"></div>
